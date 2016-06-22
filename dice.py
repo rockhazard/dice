@@ -23,6 +23,10 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
     """
 
     # pre-roll stats
+    if dice < 1:
+        sys.exit('Number of dice must be greater than 0!')
+    if sides < 2:
+        sys.exit('Number of sides must be greater than 1!')
     if bonus != 0:
         throw = '{}d{} + ({})'.format(dice,sides,bonus)
     else:
