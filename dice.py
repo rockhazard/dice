@@ -57,16 +57,8 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
                 return stats[i]
 
 def abscore():
-    # ability score roller creates a table of ability scores w/ their modifiers.
-
-    # roll 4d6 and sort results lowest to highest
-    d6a = roll(1, 6)
-    d6b = roll(1, 6)
-    d6c = roll(1, 6)
-    d6d = roll(1, 6)
-    rolls = sorted([d6a, d6b, d6c, d6d])
-
-    # remove lowest roll, get total score, and calculate modifier
+    # ability score: roll 4d6, subtract 1 die, then calculate score and modifier
+    rolls = sorted([roll(1,6) for i in range(0,4)])
     del rolls[0]
     score = sum(rolls)
     mod = math.floor(round((score - 10) / 2, 2))
@@ -148,7 +140,7 @@ def stats(dice=1, sides=20, bonus=0):
     # A dice roll that prints a complete stat table.
     eg = roll(dice,sides,bonus,stat='all')
     print(textwrap.dedent("""\
-        #### Roll Statistics For: {} ###
+        ### Roll Statistics For: {} ###
         Roll: ....... {}
         Total: ...... {}
         Average: .... {}
