@@ -198,15 +198,15 @@ def main(argv):
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent("""\
-        d20scores.py is a dice roller customized for D&D 5th Edition. Execution
+        dice.py is a dice roller customized for D&D 5th Edition. Execution
         without any options will roll a d20 and return a result with statistics.
         """), epilog=textwrap.dedent("""\
-        d20scores was developed by rockhazard and licensed under GPL3.0. 
+        dice was developed by rockhazard and licensed under GPL3.0. 
         There are no warranties expressed or implied.
         """))
     parser.add_argument('--version', help='print version info then exit', 
     version=
-    'd20scores 1.0 "Mystra", GPL3.0 (c) 2016, by rockhazard', action='version')
+    'dice 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard', action='version')
     parser.add_argument('-r', '--roll', help=
         """Roll a die or set of dice and retrieve result.  Use the form 'x x x'
         such that you can roll, say, 2d6 +5 with '2 6 5'.  The bonus must be 
