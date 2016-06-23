@@ -31,9 +31,9 @@ class Test(unittest.TestCase):
     def test_roll_maximum(self): 
         self.assertEqual(self.max, 20, 'Not equal')
 
-    # @given(st.integers())    
-    def test_roll_minimum(self): 
-        self.assertEqual(dice.roll(1,20,0,stat='min'), 1, 'Not equal')
+    @given(st.integers(min_value=0, max_value=1))
+    def test_roll_minimum(self, m):
+        self.assertEqual(dice.roll(m, 20, 0, stat='min'), 1, 'Not equal')
         
     def test_roll_dice(self): 
         self.assertEqual(self.dice, 1, 'Not equal')

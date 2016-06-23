@@ -24,9 +24,11 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
 
     # pre-roll stats
     if dice < 1:
-        sys.exit('Number of dice must be greater than 0!')
+        dice = 1
+        print('Number of dice must be greater than 0: setting dice to 1!')
     if sides < 2:
-        sys.exit('Number of sides must be greater than 1!')
+        sides = 2
+        print('Number of sides must be greater than 1: setting sides to 2!')
     if bonus != 0:
         throw = '{}d{} + ({})'.format(dice, sides, bonus)
     else:
@@ -107,7 +109,7 @@ def disadvantage(verb=True):
         return rolls[0]
 
 
-def profbonus(level=1):
+def profBonus(level=1):
     # calculate proficiency based on level tiers
     if level in range(1, 21):
         if level in (1, 2, 3, 4):
@@ -132,20 +134,20 @@ def percentile():
 
 def ability():
     # create then print six ability scores and their modifiers
-    Score1 = abscore()
-    Score2 = abscore()
-    Score3 = abscore()
-    Score4 = abscore()
-    Score5 = abscore()
-    Score6 = abscore()
+    score_1 = abscore()
+    score_2 = abscore()
+    score_3 = abscore()
+    score_4 = abscore()
+    score_5 = abscore()
+    score_6 = abscore()
 
     print('### Ability Scores ###')
-    print('roll: {} mod: {}'.format(Score1['score'], Score1['mod']))
-    print('roll: {} mod: {}'.format(Score2['score'], Score2['mod']))
-    print('roll: {} mod: {}'.format(Score3['score'], Score3['mod']))
-    print('roll: {} mod: {}'.format(Score4['score'], Score4['mod']))
-    print('roll: {} mod: {}'.format(Score5['score'], Score5['mod']))
-    print('roll: {} mod: {}\n'.format(Score6['score'], Score6['mod']))
+    print('roll: {} modifier: {}'.format(score_1['score'], score_1['mod']))
+    print('roll: {} modifier: {}'.format(score_2['score'], score_2['mod']))
+    print('roll: {} modifier: {}'.format(score_3['score'], score_3['mod']))
+    print('roll: {} modifier: {}'.format(score_4['score'], score_4['mod']))
+    print('roll: {} modifier: {}'.format(score_5['score'], score_5['mod']))
+    print('roll: {} modifier: {}\n'.format(score_6['score'], score_6['mod']))
 
 
 def stats(dice=1, sides=20, bonus=0):
@@ -184,13 +186,13 @@ def damage():
     damage6 = roll(1, 12, stat='all')
 
     print('### Damage ###')
-    print('{} (average {}): {}'.format(damage1['roll'], damage1['average'],
+    print('{}  (average {}): {}'.format(damage1['roll'], damage1['average'],
                                        damage1['total']))
-    print('{} (average {}): {}'.format(damage2['roll'], damage2['average'],
+    print('{}  (average {}): {}'.format(damage2['roll'], damage2['average'],
                                        damage2['total']))
-    print('{} (average {}): {}'.format(damage3['roll'], damage3['average'],
+    print('{}  (average {}): {}'.format(damage3['roll'], damage3['average'],
                                        damage3['total']))
-    print('{} (average {}): {}'.format(damage4['roll'], damage4['average'],
+    print('{}  (average {}): {}'.format(damage4['roll'], damage4['average'],
                                        damage4['total']))
     print('{} (average {}): {}'.format(damage5['roll'], damage5['average'],
                                        damage5['total']))
@@ -252,10 +254,10 @@ def main(argv):
     if args.ability:
         ability()
     if args.proficiency:
-        profbonus(int(args.proficiency[0]))
+        profBonus(int(args.proficiency[0]))
     if args.demo:
         ability()
-        profbonus(5)
+        profBonus(5)
         advantage()
         disadvantage()
         attack()
