@@ -28,9 +28,9 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
     if sides < 2:
         sys.exit('Number of sides must be greater than 1!')
     if bonus != 0:
-        throw = '{}d{} + ({})'.format(dice,sides,bonus)
+        throw = '{}d{} + ({})'.format(dice, sides, bonus)
     else:
-        throw = '{}d{}'.format(dice,sides)
+        throw = '{}d{}'.format(dice, sides)
     average = math.ceil((sides / 2 + 0.5) * dice) + bonus
     min = dice * 1 + bonus
     max = dice * sides + bonus
@@ -40,7 +40,7 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
     count = dice
     while count > 0:
         rolls.append(random.randrange(1, sides + 1))
-        count = count - 1
+        count -= 1
 
     # post-roll stats
     rsort = sorted(rolls)
@@ -49,8 +49,8 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
     double = total * 2
 
     # stats dictionary
-    stats = dict(average=average, total=total, dice=dice, sides=sides, min=min, 
-        max=max, half=half, double=double, sorted=rsort, roll=throw)
+    stats = dict(average=average, total=total, dice=dice, sides=sides, min=min,
+                 max=max, half=half, double=double, sorted=rsort, roll=throw)
 
     # return all roll's stats or the stat specified.
     if stat == 'all':
@@ -60,14 +60,16 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
             if stat == i:
                 return stats[i]
 
+
 def abscore():
     # ability score: roll 4d6, subtract 1 die, then calculate score and modifier
-    rolls = sorted([roll(1,6) for i in range(0,4)])
+    rolls = sorted([roll(1, 6) for i in range(0, 4)])
     del rolls[0]
     score = sum(rolls)
     mod = math.floor(round((score - 10) / 2, 2))
     result = dict(score=score, mod=mod)
     return result
+
 
 def attack(ver=True):
     # attack roll
@@ -78,6 +80,7 @@ def attack(ver=True):
     else:
         return attack
 
+
 def advantage(verb=True):
     # advantage: roll 2d20 then drop the lowest
     rolls = sorted([roll(), roll()])
@@ -85,10 +88,11 @@ def advantage(verb=True):
         print('### Advantage ###')
         print(rolls)
         del rolls[0]
-        print(rolls[0],'\n')
+        print(rolls[0], '\n')
     else:
         del rolls[0]
         return rolls[0]
+
 
 def disadvantage(verb=True):
     # disadvantage: roll 2d20 then drop the highest
@@ -97,31 +101,34 @@ def disadvantage(verb=True):
         print('### Disadvantage ###')
         print(rolls)
         del rolls[1]
-        print(rolls[0],'\n')
+        print(rolls[0], '\n')
     else:
         del rolls[1]
         return rolls[0]
 
+
 def profbonus(level=1):
     # calculate proficiency based on level tiers
-    if level in range(1,21):
-        if level in (1,2,3,4):
+    if level in range(1, 21):
+        if level in (1, 2, 3, 4):
             prof = 2
-        elif level in (5,6,7,8):
+        elif level in (5, 6, 7, 8):
             prof = 3
-        elif level in (9,10,11,12):
+        elif level in (9, 10, 11, 12):
             prof = 4
-        elif level in (13,14,15,16):
+        elif level in (13, 14, 15, 16):
             prof = 5
-        elif level in (17,18,19,20):
+        elif level in (17, 18, 19, 20):
             prof = 6
     else:
         sys.exit('Your level must be between 1 and 20!')
-    print('Your proficiency bonus at level {} is {}.\n'.format(level,prof))
+    print('Your proficiency bonus at level {} is {}.\n'.format(level, prof))
+
 
 def percentile():
     print('### Percentile ###')
     print('{}%\n'.format(roll(1, 100)))
+
 
 def ability():
     # create then print six ability scores and their modifiers
@@ -133,16 +140,17 @@ def ability():
     Score6 = abscore()
 
     print('### Ability Scores ###')
-    print('roll: {} mod: {}'.format(Score1['score'],Score1['mod']))
-    print('roll: {} mod: {}'.format(Score2['score'],Score2['mod']))
-    print('roll: {} mod: {}'.format(Score3['score'],Score3['mod']))
-    print('roll: {} mod: {}'.format(Score4['score'],Score4['mod']))
-    print('roll: {} mod: {}'.format(Score5['score'],Score5['mod']))
-    print('roll: {} mod: {}\n'.format(Score6['score'],Score6['mod']))
+    print('roll: {} mod: {}'.format(Score1['score'], Score1['mod']))
+    print('roll: {} mod: {}'.format(Score2['score'], Score2['mod']))
+    print('roll: {} mod: {}'.format(Score3['score'], Score3['mod']))
+    print('roll: {} mod: {}'.format(Score4['score'], Score4['mod']))
+    print('roll: {} mod: {}'.format(Score5['score'], Score5['mod']))
+    print('roll: {} mod: {}\n'.format(Score6['score'], Score6['mod']))
+
 
 def stats(dice=1, sides=20, bonus=0):
     # A dice roll that prints a complete stat table.
-    eg = roll(dice,sides,bonus,stat='all')
+    eg = roll(dice, sides, bonus, stat='all')
     print(textwrap.dedent("""\
         ### Roll Statistics For: {} ###
         Roll: ....... {}
@@ -154,9 +162,9 @@ def stats(dice=1, sides=20, bonus=0):
         Sides/Die: .. {}
         Half ........ {}
         Double ...... {}        
-        """.format(eg['roll'], eg['sorted'], eg['total'], eg['average'], 
-            eg['min'], eg['max'], eg['dice'], eg['sides'], eg['half'], 
-            eg['double'])))
+        """.format(eg['roll'], eg['sorted'], eg['total'], eg['average'],
+                   eg['min'], eg['max'], eg['dice'], eg['sides'], eg['half'],
+                   eg['double'])))
 
     # Message for a critical or an automatic failure.
     if dice == 1 and sides == 20:
@@ -165,29 +173,31 @@ def stats(dice=1, sides=20, bonus=0):
         elif eg['sorted'][0] == 1:
             print('Pathetic!\n')
 
+
 def damage():
     # print out sample damage dice and their averages
-    damage1 = roll(1,4, stat='all')
-    damage2 = roll(1,6, stat='all')
-    damage3 = roll(2,6, stat='all')
-    damage4 = roll(1,8, stat='all')
-    damage5 = roll(1,10, stat='all')
-    damage6 = roll(1,12, stat='all')
+    damage1 = roll(1, 4, stat='all')
+    damage2 = roll(1, 6, stat='all')
+    damage3 = roll(2, 6, stat='all')
+    damage4 = roll(1, 8, stat='all')
+    damage5 = roll(1, 10, stat='all')
+    damage6 = roll(1, 12, stat='all')
 
     print('### Damage ###')
     print('{} (average {}): {}'.format(damage1['roll'], damage1['average'],
-        damage1['total']))
+                                       damage1['total']))
     print('{} (average {}): {}'.format(damage2['roll'], damage2['average'],
-        damage2['total']))
+                                       damage2['total']))
     print('{} (average {}): {}'.format(damage3['roll'], damage3['average'],
-        damage3['total']))
+                                       damage3['total']))
     print('{} (average {}): {}'.format(damage4['roll'], damage4['average'],
-        damage4['total']))
+                                       damage4['total']))
     print('{} (average {}): {}'.format(damage5['roll'], damage5['average'],
-        damage5['total']))
+                                       damage5['total']))
     print('{} (average {}): {}'.format(damage6['roll'], damage6['average'],
-        damage6['total']))
+                                       damage6['total']))
     print()
+
 
 def main(argv):
     # parse commandline arguments
@@ -200,34 +210,35 @@ def main(argv):
         dice was developed by rockhazard and licensed under GPL3.0. 
         There are no warranties expressed or implied.
         """))
-    parser.add_argument('--version', help='print version info then exit', 
-    version=
-    'dice 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard', action='version')
+    parser.add_argument('--version', help='print version info then exit',
+                        version=
+                        'dice 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard',
+                        action='version')
     parser.add_argument('-r', '--roll', help=
-        """Roll a die or set of dice and retrieve result.  Use the form 'x x x'
-        such that you can roll, say, 2d6 +5 with '2 6 5'.  The bonus must be 
-        included, even if it is 0.""", 
-        nargs=3, metavar=('DICE', 'SIDES','BONUS'))
+    """Roll a die or set of dice and retrieve result.  Use the form 'x x x'
+    such that you can roll, say, 2d6 +5 with '2 6 5'.  The bonus must be
+    included, even if it is 0.""",
+                        nargs=3, metavar=('DICE', 'SIDES', 'BONUS'))
     parser.add_argument('-s', '--stats', help=
-        """Roll a die or set of dice and retrieve all statistics.  Use the form 
-        'x x x' such that you can roll, say, 2d6+5 with '2 6 5'.  The bonus 
-        must be included, even if it is 0.""", 
-        nargs=3, metavar=('DICE', 'SIDES','BONUS'))
+    """Roll a die or set of dice and retrieve all statistics.  Use the form
+    'x x x' such that you can roll, say, 2d6+5 with '2 6 5'.  The bonus
+    must be included, even if it is 0.""",
+                        nargs=3, metavar=('DICE', 'SIDES', 'BONUS'))
     parser.add_argument('-a', '--advantage', help=
-        'Roll advantage.  This rolls 2d20 and removes the lowest die.', 
-        action='store_true')
+    'Roll advantage.  This rolls 2d20 and removes the lowest die.',
+                        action='store_true')
     parser.add_argument('-d', '--disadvantage', help=
-        'Roll disadvantage.  This rolls 2d20 and removes the highest die.', 
-        action='store_true')
+    'Roll disadvantage.  This rolls 2d20 and removes the highest die.',
+                        action='store_true')
     parser.add_argument('-p', '--proficiency', help=
-        'Display your proficiency bonus by entering your LEVEL from 1 to 20.', 
-        nargs=1, metavar=('LEVEL'))
+    'Display your proficiency bonus by entering your LEVEL from 1 to 20.',
+                        nargs=1, metavar=('LEVEL'))
     parser.add_argument('--ability', help=
-        'Roll a set of ability scores with modifiers.', 
-        action='store_true')
+    'Roll a set of ability scores with modifiers.',
+                        action='store_true')
     parser.add_argument('--demo', help=
-        'Demonstrate program features.', 
-        action='store_true')
+    'Demonstrate program features.',
+                        action='store_true')
     args = parser.parse_args()
 
     if args.roll:
@@ -250,11 +261,12 @@ def main(argv):
         attack()
         percentile()
         damage()
-        stats(20,6)
+        stats(20, 6)
     if len(sys.argv) == 1:
         # if no arguments, roll a d20 with stats
         stats()
 
+
 if __name__ == '__main__':
     # execute main method with cli args as input then exit
-    sys.exit(main(sys.argv[1:]))                                        
+    sys.exit(main(sys.argv[1:]))
