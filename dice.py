@@ -13,6 +13,31 @@ __author__ = 'rockhazard'
 import sys, random, math, argparse, textwrap
 
 
+def roll_args(arg):
+    # allow user to enter normal roll notation (e.g. 2d6+5)
+    # returns a list of int-convertible strings for roll().
+    num = type(1)
+    neg_num = False
+    raw = []
+    dice_args = []
+    for char in arg:
+        try:
+            if type(int(char)) == num:
+                raw.append(char)
+        except ValueError:
+            new_num = ''.join(raw)
+            if char is '-':
+                neg_num = '-' + arg[arg.index(char) + 1]
+            dice_args.append(new_num)
+            raw = []
+            continue
+    if not neg_num:
+        dice_args.append(raw[0])
+    else:
+        dice_args.append(neg_num)
+    return dice_args
+
+
 def roll(dice=1, sides=20, bonus=0, stat='total'):
     """
     dice roller
@@ -217,15 +242,13 @@ def main(argv):
                         'dice 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard',
                         action='version')
     parser.add_argument('-r', '--roll', help=
-    """Roll a die or set of dice and retrieve result.  Use the form 'x x x'
-    such that you can roll, say, 2d6 +5 with '2 6 5'.  The bonus must be
-    included, even if it is 0.""",
-                        nargs=3, metavar=('DICE', 'SIDES', 'BONUS'))
+    """Roll a die or set of dice and retrieve result.  Use normal dice notation
+    such that "2d6+5" means 2 six-sided dice plus 5.  The bonus must be
+    included, even if it is 0.""", metavar='ROLL')
     parser.add_argument('-s', '--stats', help=
     """Roll a die or set of dice and retrieve all statistics.  Use the form
     'x x x' such that you can roll, say, 2d6+5 with '2 6 5'.  The bonus
-    must be included, even if it is 0.""",
-                        nargs=3, metavar=('DICE', 'SIDES', 'BONUS'))
+    must be included, even if it is 0.""", metavar='ROLL')
     parser.add_argument('-a', '--advantage', help=
     'Roll advantage.  This rolls 2d20 and removes the lowest die.',
                         action='store_true')
@@ -244,9 +267,18 @@ def main(argv):
     args = parser.parse_args()
 
     if args.roll:
-        print(roll(int(args.roll[0]), int(args.roll[1]), int(args.roll[2])))
+        ra = roll_args(args.roll)
+        try:
+            print(roll(int(ra[0]), int(ra[1]), int(ra[2])))
+        except IndexError:
+            print(roll(int(ra[0]), int(ra[1]), 0))
+
     if args.stats:
-        stats(int(args.stats[0]), int(args.stats[1]), int(args.stats[2]))
+        ra = roll_args(args.stats)
+        try:
+            stats(int(ra[0]), int(ra[1]), int(ra[2]))
+        except IndexError:
+            stats(int(ra[0]), int(ra[1]), 0)
     if args.advantage:
         advantage()
     if args.disadvantage:

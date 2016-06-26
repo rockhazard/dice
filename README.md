@@ -11,7 +11,7 @@ Dice
 
 * Have Python 3.4+ installed.
 * Have a terminal.
-* Execute using "dice.py" for a d20 roll, or "dice.py -r 2 6 0" for 2d6+0 roll (bonus required).
+* Execute using "dice.py" for a d20 roll, or "dice.py -r 2d6+5" for 2d6+5 roll (bonus optional).
 * For more info type "dice.py -h".
 
 ### Contact Author ###
