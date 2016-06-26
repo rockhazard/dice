@@ -22,12 +22,13 @@ def roll_args(arg):
     dice_args = []
     for char in arg:
         try:
-            if type(int(char)) == num:
+            if type(int(char)) is num:
                 raw.append(char)
         except ValueError:
             new_num = ''.join(raw)
             if char is '-':
-                neg_num = '-' + arg[arg.index(char) + 1]
+                next_char = arg[arg.index(char) + 1]
+                neg_num = '-' + next_char
             dice_args.append(new_num)
             raw = []
             continue
@@ -59,8 +60,8 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
     else:
         throw = '{}d{}'.format(dice, sides)
     average = math.ceil((sides / 2 + 0.5) * dice) + bonus
-    min = dice * 1 + bonus
-    max = dice * sides + bonus
+    minimum = dice * 1 + bonus
+    maximum = dice * sides + bonus
 
     # roll
     rolls = []
@@ -76,8 +77,9 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
     double = total * 2
 
     # stats dictionary
-    stats = dict(average=average, total=total, dice=dice, sides=sides, min=min,
-                 max=max, half=half, double=double, sorted=rsort, roll=throw)
+    stats = dict(average=average, total=total, dice=dice, sides=sides,
+                 min=minimum, max=maximum, half=half, double=double,
+                 sorted=rsort, roll=throw)
 
     # return all roll's stats or the stat specified.
     if stat == 'all':
@@ -228,27 +230,26 @@ def damage():
 
 def main(argv):
     # parse commandline arguments
-    parser = argparse.ArgumentParser(
+    parser = argparse.ArgumentParser( prog=sys.argv[0][2:],
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent("""\
-        dice.py is a dice roller customized for D&D 5th Edition. Execution
+        %(prog)s is a dice roller customized for D&D 5th Edition. Execution
         without any options will roll a d20 and return a result with statistics.
         """), epilog=textwrap.dedent("""\
-        dice was developed by rockhazard and licensed under GPL3.0. 
+        %(prog)s was developed by rockhazard and licensed under GPL3.0.
         There are no warranties expressed or implied.
         """))
     parser.add_argument('--version', help='print version info then exit',
                         version=
-                        'dice 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard',
+                        '%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard',
                         action='version')
     parser.add_argument('-r', '--roll', help=
-    """Roll a die or set of dice and retrieve result.  Use normal dice notation
-    such that "2d6+5" means 2 six-sided dice plus 5.  The bonus must be
-    included, even if it is 0.""", metavar='ROLL')
+    """Roll a die or set of dice and retrieve result. Use normal dice notation
+    such that "2d6+5" means 2 six-sided dice plus 5.""", metavar='ROLL')
     parser.add_argument('-s', '--stats', help=
-    """Roll a die or set of dice and retrieve all statistics.  Use the form
-    'x x x' such that you can roll, say, 2d6+5 with '2 6 5'.  The bonus
-    must be included, even if it is 0.""", metavar='ROLL')
+    """Roll a die or set of dice and retrieve all statistics. Use normal dice
+    notation such that "2d6+5" means 2 six-sided dice plus 5.""",
+                        metavar='ROLL')
     parser.add_argument('-a', '--advantage', help=
     'Roll advantage.  This rolls 2d20 and removes the lowest die.',
                         action='store_true')
