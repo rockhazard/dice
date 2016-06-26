@@ -31,10 +31,10 @@ def roll_args(arg):
             new_num = ''.join(raw)
             dice_args.append(new_num)
             if char is '-':
-                next_char = arg[arg.index(char) + 1]
+                next_char = arg[(arg.index(char) + 1):]
                 neg_num = '-' + next_char
             elif char is '+':
-                next_char = arg[arg.index(char) + 1]
+                next_char = arg[(arg.index(char) + 1):]
                 pos_num = next_char
             raw = []
     else:
@@ -42,6 +42,7 @@ def roll_args(arg):
             new_num = ''.join(raw)
             dice_args.append(new_num)
         if neg_num:
+            dice_args.pop()
             dice_args.append(neg_num)
         elif pos_num:
             dice_args.append(pos_num)
@@ -258,11 +259,11 @@ def main(argv):
                         action='version')
     parser.add_argument('-r', '--roll', help=
     """Roll a die or set of dice and retrieve result. Use normal dice notation
-    such that "2d6+5" means 2 six-sided dice plus 5.""", metavar='ROLL')
+    such that "2d6+5" means 2 six-sided dice plus 5.""", metavar='XdY+/-Z')
     parser.add_argument('-s', '--stats', help=
     """Roll a die or set of dice and retrieve all statistics. Use normal dice
     notation such that "2d6+5" means 2 six-sided dice plus 5.""",
-                        metavar='ROLL')
+                        metavar='XdY+/-Z')
     parser.add_argument('-a', '--advantage', help=
     'Roll advantage.  This rolls 2d20 and removes the lowest die.',
                         action='store_true')
