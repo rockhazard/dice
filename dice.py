@@ -16,13 +16,11 @@ import sys, random, math, argparse, textwrap
 def roll_args(arg):
     # allow user to enter normal roll notation (e.g. 2d6+5)
     # returns a list of int-convertible strings for roll().
+    roll_args_format_check(arg)
     num = type(1)
-    neg_num = False
-    pos_num = False
     raw = []
     dice_args = []
-    if 'd' not in arg:
-        sys.exit('Roll notation must include "d", as in "1d20".')
+    neg_num, pos_num = False, False
     for char in arg:
         try:
             if type(int(char)) is num:
@@ -50,7 +48,21 @@ def roll_args(arg):
             dice_args.append(0)
     # print(raw)
     # print(dice_args)
+    roll_args_check(dice_args)
     return dice_args
+
+
+def roll_args_format_check(arg):
+    if 'd' not in arg:
+        sys.exit('Roll notation must include "d", as in "1d20".')
+
+
+def roll_args_check(arg):
+    for die in arg:
+        try:
+            int(die)
+        except ValueError:
+            sys.exit('USAGE ERROR: Invalid input.')
 
 
 def roll(dice=1, sides=20, bonus=0, stat='total'):
