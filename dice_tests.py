@@ -17,7 +17,10 @@ class Test(unittest.TestCase):
         self.min = dice.roll(stat='min')
         self.dice = dice.roll(stat='dice')
         self.sides = dice.roll(stat='sides')
-        self.dice_parse = dice.roll_args('10d100-50')
+        self.dice_parse_neg = dice.roll_args('10d100-50')
+        self.dice_parse_pos = dice.roll_args('10d100+50')
+        self.dice_parse_2dice = dice.roll_args('2d4')
+        self.dice_parse_2dice_bonus = dice.roll_args('2d4+5')
         # test_Method2 Headers:
         # self.resultMeth2 = self.TestedClass2.testedMethod2(v3,v4)
 
@@ -42,8 +45,20 @@ class Test(unittest.TestCase):
     def test_roll_sides(self):
         self.assertEqual(self.sides, 20, 'Not equal')
 
-    def test_roll_args(self):
-        self.assertEqual(self.dice_parse, ['10', '100', '-50'],
+    def test_roll_args_neg(self):
+        self.assertEqual(self.dice_parse_neg, ['10', '100', '-50'],
+                         'Parse failure.')
+
+    def test_roll_args_pos(self):
+        self.assertEqual(self.dice_parse_pos, ['10', '100', '50'],
+                         'Parse failure.')
+
+    def test_roll_args_2dice(self):
+        self.assertEqual(self.dice_parse_2dice, ['2', '4', 0],
+                         'Parse failure.')
+
+    def test_roll_args_2dice_bonus(self):
+        self.assertEqual(self.dice_parse_2dice_bonus, ['2', '4', '5'],
                          'Parse failure.')
 
 

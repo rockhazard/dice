@@ -39,15 +39,16 @@ def roll_args(arg):
         if len(raw) >= 2:
             new_num = ''.join(raw)
             dice_args.append(new_num)
+        else:
+            dice_args.append(raw[0])
         if neg_num:
             dice_args.pop()
             dice_args.append(neg_num)
         elif pos_num:
+            dice_args.pop()
             dice_args.append(pos_num)
         if len(dice_args) < 3:
             dice_args.append(0)
-    # print(raw)
-    # print(dice_args)
     roll_args_check(dice_args)
     return dice_args
 
