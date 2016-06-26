@@ -18,24 +18,37 @@ def roll_args(arg):
     # returns a list of int-convertible strings for roll().
     num = type(1)
     neg_num = False
+    pos_num = False
     raw = []
     dice_args = []
+    if 'd' not in arg:
+        sys.exit('Roll notation must include "d", as in "1d20".')
     for char in arg:
         try:
             if type(int(char)) is num:
                 raw.append(char)
         except ValueError:
             new_num = ''.join(raw)
+            dice_args.append(new_num)
             if char is '-':
                 next_char = arg[arg.index(char) + 1]
                 neg_num = '-' + next_char
-            dice_args.append(new_num)
+            elif char is '+':
+                next_char = arg[arg.index(char) + 1]
+                pos_num = next_char
             raw = []
-            continue
-    if not neg_num:
-        dice_args.append(raw[0])
     else:
-        dice_args.append(neg_num)
+        if len(raw) >= 2:
+            new_num = ''.join(raw)
+            dice_args.append(new_num)
+        if neg_num:
+            dice_args.append(neg_num)
+        elif pos_num:
+            dice_args.append(pos_num)
+        if len(dice_args) < 3:
+            dice_args.append(0)
+    # print(raw)
+    # print(dice_args)
     return dice_args
 
 
@@ -269,17 +282,10 @@ def main(argv):
 
     if args.roll:
         ra = roll_args(args.roll)
-        try:
-            print(roll(int(ra[0]), int(ra[1]), int(ra[2])))
-        except IndexError:
-            print(roll(int(ra[0]), int(ra[1]), 0))
-
+        print(roll(int(ra[0]), int(ra[1]), int(ra[2])))
     if args.stats:
         ra = roll_args(args.stats)
-        try:
-            stats(int(ra[0]), int(ra[1]), int(ra[2]))
-        except IndexError:
-            stats(int(ra[0]), int(ra[1]), 0)
+        stats(int(ra[0]), int(ra[1]), int(ra[2]))
     if args.advantage:
         advantage()
     if args.disadvantage:
