@@ -62,7 +62,7 @@ def roll_args_int_check(roll_ints):
         try:
             int(die)
         except ValueError:
-            sys.exit('USAGE ERROR: At least two whole numbers required.')
+            sys.exit('USAGE ERROR: between two and three integers required.')
     else:
         return True
 
@@ -292,20 +292,24 @@ def main(argv):
                         action='store_true')
     args = parser.parse_args()
 
-    if args.roll:
-        ra = roll_args(args.roll)
-        print(roll(int(ra[0]), int(ra[1]), int(ra[2])))
-    if args.stats:
-        ra = roll_args(args.stats)
-        stats_roll(int(ra[0]), int(ra[1]), int(ra[2]))
+    try:  # options that require user input.
+        if args.roll:
+            ra = roll_args(args.roll)
+            print(roll(int(ra[0]), int(ra[1]), int(ra[2])))
+        if args.stats:
+            ra = roll_args(args.stats)
+            stats_roll(int(ra[0]), int(ra[1]), int(ra[2]))
+        if args.proficiency:
+            prof_bonus(int(args.proficiency[0]))
+    except ValueError:
+        sys.exit('USAGE ERROR: invalid input.')
+
     if args.advantage:
         advantage()
     if args.disadvantage:
         disadvantage()
     if args.ability:
         ability()
-    if args.proficiency:
-        prof_bonus(int(args.proficiency[0]))
     if args.demo:
         ability()
         prof_bonus(5)
