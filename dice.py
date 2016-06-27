@@ -10,7 +10,11 @@
 
 __author__ = 'rockhazard'
 
-import sys, random, math, argparse, textwrap
+import sys
+import random
+import math
+import argparse
+import textwrap
 
 
 def roll_args(arg):
@@ -18,39 +22,25 @@ def roll_args(arg):
     # returns a list of int-convertible strings for roll().
     roll_args_format_check(arg)
     num = type(1)
-    raw = []
-    dice_args = []
-    neg_num, pos_num = False, False
-    for char in arg:
-        try:
-            if type(int(char)) is num:
-                raw.append(char)
-        except ValueError:
-            new_num = ''.join(raw)
-            dice_args.append(new_num)
-            if char is '-':
-                next_char = arg[(arg.index(char) + 1):]
-                neg_num = '-' + next_char
-            elif char is '+':
-                next_char = arg[(arg.index(char) + 1):]
-                pos_num = next_char
-            raw = []
+    raw = arg.split("d")
+    if len(raw[1].split('-')) == 2:
+        neg_bonus = raw[1].split('-')
+        neg_bonus[1] = '-' + neg_bonus[1]
+        neg_bonus.insert(0, raw[0])
+        if len(neg_bonus) < 3:
+            neg_bonus.insert(2,0)
+        return  neg_bonus
+    elif len(raw[1].split('+')) == 2:
+        pos_bonus = raw[1].split('+')
+        pos_bonus.insert(0, raw[0])
+        if len(pos_bonus) < 3:
+            pos_bonus.insert(2,0)
+        return pos_bonus
     else:
-        if len(raw) >= 2:
-            new_num = ''.join(raw)
-            dice_args.append(new_num)
-        else:
-            dice_args.append(raw[0])
-        if neg_num:
-            dice_args.pop()
-            dice_args.append(neg_num)
-        elif pos_num:
-            dice_args.pop()
-            dice_args.append(pos_num)
-        if len(dice_args) < 3:
-            dice_args.append(0)
-    roll_args_check(dice_args)
-    return dice_args
+        if len(raw) == 2:
+            raw.append(0)
+        return raw
+    roll_args_int_check(dice_args)
 
 
 def roll_args_format_check(arg):
@@ -58,7 +48,7 @@ def roll_args_format_check(arg):
         sys.exit('Roll notation must include "d", as in "1d20".')
 
 
-def roll_args_check(arg):
+def roll_args_int_check(arg):
     for die in arg:
         try:
             int(die)
@@ -117,7 +107,7 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
                 return stats[i]
 
 
-def abscore():
+def ability_score():
     # ability score: roll 4d6, subtract 1 die, then calculate score and modifier
     rolls = sorted([roll(1, 6) for i in range(0, 4)])
     del rolls[0]
@@ -188,12 +178,12 @@ def percentile():
 
 def ability():
     # create then print six ability scores and their modifiers
-    score_1 = abscore()
-    score_2 = abscore()
-    score_3 = abscore()
-    score_4 = abscore()
-    score_5 = abscore()
-    score_6 = abscore()
+    score_1 = ability_score()
+    score_2 = ability_score()
+    score_3 = ability_score()
+    score_4 = ability_score()
+    score_5 = ability_score()
+    score_6 = ability_score()
 
     print('### Ability Scores ###')
     print('roll: {} modifier: {}'.format(score_1['score'], score_1['mod']))
@@ -241,13 +231,13 @@ def damage():
 
     print('### Damage ###')
     print('{}  (average {}): {}'.format(damage1['roll'], damage1['average'],
-                                       damage1['total']))
+                                        damage1['total']))
     print('{}  (average {}): {}'.format(damage2['roll'], damage2['average'],
-                                       damage2['total']))
+                                        damage2['total']))
     print('{}  (average {}): {}'.format(damage3['roll'], damage3['average'],
-                                       damage3['total']))
+                                        damage3['total']))
     print('{}  (average {}): {}'.format(damage4['roll'], damage4['average'],
-                                       damage4['total']))
+                                        damage4['total']))
     print('{} (average {}): {}'.format(damage5['roll'], damage5['average'],
                                        damage5['total']))
     print('{} (average {}): {}'.format(damage6['roll'], damage6['average'],
@@ -257,9 +247,9 @@ def damage():
 
 def main(argv):
     # parse commandline arguments
-    parser = argparse.ArgumentParser( prog=sys.argv[0][2:],
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent("""\
+    parser = argparse.ArgumentParser(prog=sys.argv[0][2:],
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description=textwrap.dedent("""\
         %(prog)s is a dice roller customized for D&D 5th Edition. Execution
         without any options will roll a d20 and return a result with statistics.
         """), epilog=textwrap.dedent("""\
@@ -267,30 +257,22 @@ def main(argv):
         There are no warranties expressed or implied.
         """))
     parser.add_argument('--version', help='print version info then exit',
-                        version=
-                        '%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard',
+                        version='%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard',
                         action='version')
-    parser.add_argument('-r', '--roll', help=
-    """Roll a die or set of dice and retrieve result. Use normal dice notation
+    parser.add_argument('-r', '--roll', help="""Roll a die or set of dice and retrieve result. Use normal dice notation
     such that "2d6+5" means 2 six-sided dice plus 5.""", metavar='XdY+/-Z')
-    parser.add_argument('-s', '--stats', help=
-    """Roll a die or set of dice and retrieve all statistics. Use normal dice
+    parser.add_argument('-s', '--stats', help="""Roll a die or set of dice and retrieve all statistics. Use normal dice
     notation such that "2d6+5" means 2 six-sided dice plus 5.""",
                         metavar='XdY+/-Z')
-    parser.add_argument('-a', '--advantage', help=
-    'Roll advantage.  This rolls 2d20 and removes the lowest die.',
+    parser.add_argument('-a', '--advantage', help='Roll advantage.  This rolls 2d20 and removes the lowest die.',
                         action='store_true')
-    parser.add_argument('-d', '--disadvantage', help=
-    'Roll disadvantage.  This rolls 2d20 and removes the highest die.',
+    parser.add_argument('-d', '--disadvantage', help='Roll disadvantage.  This rolls 2d20 and removes the highest die.',
                         action='store_true')
-    parser.add_argument('-p', '--proficiency', help=
-    'Display your proficiency bonus by entering your LEVEL from 1 to 20.',
+    parser.add_argument('-p', '--proficiency', help='Display your proficiency bonus by entering your LEVEL from 1 to 20.',
                         nargs=1, metavar=('LEVEL'))
-    parser.add_argument('--ability', help=
-    'Roll a set of ability scores with modifiers.',
+    parser.add_argument('--ability', help='Roll a set of ability scores with modifiers.',
                         action='store_true')
-    parser.add_argument('--demo', help=
-    'Demonstrate program features.',
+    parser.add_argument('--demo', help='Demonstrate program features.',
                         action='store_true')
     args = parser.parse_args()
 

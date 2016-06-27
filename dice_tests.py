@@ -18,10 +18,10 @@ class Test(unittest.TestCase):
         self.dice = dice.roll(stat='dice')
         self.sides = dice.roll(stat='sides')
         # Dice Argument Parsing:
-        self.dice_parse_neg = dice.roll_args('10d100-50')
-        self.dice_parse_pos = dice.roll_args('10d100+50')
-        self.dice_parse_2dice = dice.roll_args('2d4')
-        self.dice_parse_2dice_bonus = dice.roll_args('2d4+5')
+        self.roll_args_neg = dice.roll_args('10d100-50')
+        self.roll_args_pos = dice.roll_args('10d100+50')
+        self.roll_args_2dice = dice.roll_args('2d4')
+        self.roll_args_2dice_bonus = dice.roll_args('2d4+5')
 
     def tearDown(self):
         # cleanup operations: close/remove files, etc.
@@ -46,19 +46,19 @@ class Test(unittest.TestCase):
 
     # roll_args tests
     def test_roll_args_neg(self):
-        self.assertEqual(self.dice_parse_neg, ['10', '100', '-50'],
+        self.assertEqual(self.roll_args_neg, ['10', '100', '-50'],
                          'Parse failure.')
 
     def test_roll_args_pos(self):
-        self.assertEqual(self.dice_parse_pos, ['10', '100', '50'],
+        self.assertEqual(self.roll_args_pos, ['10', '100', '50'],
                          'Parse failure.')
 
     def test_roll_args_2dice(self):
-        self.assertEqual(self.dice_parse_2dice, ['2', '4', 0],
+        self.assertEqual(self.roll_args_2dice, ['2', '4', 0],
                          'Parse failure.')
 
     def test_roll_args_2dice_bonus(self):
-        self.assertEqual(self.dice_parse_2dice_bonus, ['2', '4', '5'],
+        self.assertEqual(self.roll_args_2dice_bonus, ['2', '4', '5'],
                          'Parse failure.')
 
 
