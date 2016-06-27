@@ -8,7 +8,6 @@
 * averages are rounded up to the nearest whole number, reflecting hp rules
 """
 
-__author__ = 'rockhazard'
 
 import sys
 import random
@@ -17,43 +16,55 @@ import argparse
 import textwrap
 
 
+__author__ = 'rockhazard'
+
+
 def roll_args(arg):
     # allow user to enter normal roll notation (e.g. 2d6+5)
     # returns a list of int-convertible strings for roll().
     roll_args_format_check(arg)
-    num = type(1)
-    raw = arg.split("d")
-    if len(raw[1].split('-')) == 2:
-        neg_bonus = raw[1].split('-')
-        neg_bonus[1] = '-' + neg_bonus[1]
-        neg_bonus.insert(0, raw[0])
-        if len(neg_bonus) < 3:
-            neg_bonus.insert(2,0)
-        return  neg_bonus
-    elif len(raw[1].split('+')) == 2:
-        pos_bonus = raw[1].split('+')
-        pos_bonus.insert(0, raw[0])
-        if len(pos_bonus) < 3:
-            pos_bonus.insert(2,0)
-        return pos_bonus
-    else:
-        if len(raw) == 2:
-            raw.append(0)
-        return raw
-    roll_args_int_check(dice_args)
+    init_args = arg.split('d')
+    # if init_args has a negative mod, create index for it
+    if len(init_args[1].split('-')) == 2:
+        neg_mod = init_args[1].split('-')
+        neg_mod[1] = '-' + neg_mod[1]
+        neg_mod.insert(0, init_args[0])
+        if len(neg_mod) < 3:
+            neg_mod.insert(2, 0)
+        roll_args_int_check(neg_mod)
+        return neg_mod
+    # if init_args has a positive mod, create index for it
+    elif len(init_args[1].split('+')) == 2:
+        pos_mod = init_args[1].split('+')
+        pos_mod.insert(0, init_args[0])
+        if len(pos_mod) < 3:
+            pos_mod.insert(2, 0)
+        roll_args_int_check(pos_mod)
+        return pos_mod
+    else:  # zero mod roll
+        if len(init_args) == 2:
+            init_args.append(0)
+            roll_args_int_check(init_args)
+            return init_args
+        else:
+            sys.exit('USAGE ERROR: At least one die required.')
 
 
 def roll_args_format_check(arg):
     if 'd' not in arg:
-        sys.exit('Roll notation must include "d", as in "1d20".')
+        sys.exit('USAGE ERROR: Roll notation must include "d", as in "1d20".')
+    else:
+        return True
 
 
-def roll_args_int_check(arg):
-    for die in arg:
+def roll_args_int_check(roll_ints):
+    for die in roll_ints:
         try:
             int(die)
         except ValueError:
-            sys.exit('USAGE ERROR: Invalid input.')
+            sys.exit('USAGE ERROR: At least two whole numbers required.')
+    else:
+        return True
 
 
 def roll(dice=1, sides=20, bonus=0, stat='total'):
@@ -65,17 +76,20 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
     * use stat='all' to return a dictionary of all stats
     """
 
-    # pre-roll stats
+    # pre-roll check
     if dice < 1:
         dice = 1
         print('Number of dice must be greater than 0: setting dice to 1!')
     if sides < 2:
         sides = 2
         print('Number of sides must be greater than 1: setting sides to 2!')
+    # bonus formatting
     if bonus != 0:
         throw = '{}d{} + ({})'.format(dice, sides, bonus)
     else:
         throw = '{}d{}'.format(dice, sides)
+
+    # pre-roll stats
     average = math.ceil((sides / 2 + 0.5) * dice) + bonus
     minimum = dice * 1 + bonus
     maximum = dice * sides + bonus
@@ -98,7 +112,7 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
                  min=minimum, max=maximum, half=half, double=double,
                  sorted=rsort, roll=throw)
 
-    # return all roll's stats or the stat specified.
+    # return all roll's stats or specified stat.
     if stat == 'all':
         return stats
     else:
@@ -119,12 +133,12 @@ def ability_score():
 
 def attack(ver=True):
     # attack roll
-    attack = roll()
+    default_attack = roll()
     if ver:
         print('### ATTACK! ###')
-        print(attack, '\n')
+        print(default_attack, '\n')
     else:
-        return attack
+        return default_attack
 
 
 def advantage(verb=True):
@@ -153,8 +167,9 @@ def disadvantage(verb=True):
         return rolls[0]
 
 
-def profBonus(level=1):
+def prof_bonus(level=1):
     # calculate proficiency based on level tiers
+    prof = 2
     if level in range(1, 21):
         if level in (1, 2, 3, 4):
             prof = 2
@@ -194,7 +209,7 @@ def ability():
     print('roll: {} modifier: {}\n'.format(score_6['score'], score_6['mod']))
 
 
-def stats(dice=1, sides=20, bonus=0):
+def stats_roll(dice=1, sides=20, bonus=0):
     # A dice roll that prints a complete stat table.
     eg = roll(dice, sides, bonus, stat='all')
     print(textwrap.dedent("""\
@@ -259,18 +274,23 @@ def main(argv):
     parser.add_argument('--version', help='print version info then exit',
                         version='%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard',
                         action='version')
-    parser.add_argument('-r', '--roll', help="""Roll a die or set of dice and retrieve result. Use normal dice notation
-    such that "2d6+5" means 2 six-sided dice plus 5.""", metavar='XdY+/-Z')
-    parser.add_argument('-s', '--stats', help="""Roll a die or set of dice and retrieve all statistics. Use normal dice
-    notation such that "2d6+5" means 2 six-sided dice plus 5.""",
-                        metavar='XdY+/-Z')
-    parser.add_argument('-a', '--advantage', help='Roll advantage.  This rolls 2d20 and removes the lowest die.',
+    parser.add_argument('-r', '--roll', help="""Roll a die or set of dice and
+    retrieve a result.  Use normal dice notation, where X > 0, Y > 1, and Z is
+    optional but can be any integer.""", metavar='XdY+/-Z')
+    parser.add_argument('-s', '--stats', help="""Roll a die or set of dice and
+    retrieve a result  with statistics. Use normal dice notation, where X > 0,
+    Y > 1, and Z is optional but can be  any integer.""", metavar='XdY+/-Z')
+    parser.add_argument('-a', '--advantage',
+                        help='Roll advantage. This rolls 2d20 and removes the lowest die.',
                         action='store_true')
-    parser.add_argument('-d', '--disadvantage', help='Roll disadvantage.  This rolls 2d20 and removes the highest die.',
+    parser.add_argument('-d', '--disadvantage',
+                        help='Roll disadvantage. This rolls 2d20 and removes the highest die.',
                         action='store_true')
-    parser.add_argument('-p', '--proficiency', help='Display your proficiency bonus by entering your LEVEL from 1 to 20.',
+    parser.add_argument('-p', '--proficiency',
+                        help='Display your proficiency bonus by entering your LEVEL from 1 to 20.',
                         nargs=1, metavar=('LEVEL'))
-    parser.add_argument('--ability', help='Roll a set of ability scores with modifiers.',
+    parser.add_argument('--ability',
+                        help='Roll a set of ability scores with modifiers.',
                         action='store_true')
     parser.add_argument('--demo', help='Demonstrate program features.',
                         action='store_true')
@@ -281,7 +301,7 @@ def main(argv):
         print(roll(int(ra[0]), int(ra[1]), int(ra[2])))
     if args.stats:
         ra = roll_args(args.stats)
-        stats(int(ra[0]), int(ra[1]), int(ra[2]))
+        stats_roll(int(ra[0]), int(ra[1]), int(ra[2]))
     if args.advantage:
         advantage()
     if args.disadvantage:
@@ -289,21 +309,20 @@ def main(argv):
     if args.ability:
         ability()
     if args.proficiency:
-        profBonus(int(args.proficiency[0]))
+        prof_bonus(int(args.proficiency[0]))
     if args.demo:
         ability()
-        profBonus(5)
+        prof_bonus(5)
         advantage()
         disadvantage()
         attack()
         percentile()
         damage()
-        stats(20, 6)
+        stats_roll(20, 6)
     if len(sys.argv) == 1:
-        # if no arguments, roll a d20 with stats
-        stats()
+        # if no arguments, roll a d20 with stats_roll
+        stats_roll()
 
 
 if __name__ == '__main__':
-    # execute main method with cli args as input then exit
     sys.exit(main(sys.argv[1:]))
