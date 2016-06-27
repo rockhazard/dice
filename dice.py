@@ -168,21 +168,17 @@ def disadvantage(verb=True):
 
 
 def prof_bonus(level=1):
-    # calculate proficiency based on level tiers
+    # calculate proficiency bonus (prof) based on level tiers
+    # proficiency equals tier's index in prof_tiers plus 2.
+    if level > 20:
+        sys.exit('USAGE ERROR: Level must be between 1 and 20.')
+    prof_tiers = [1, 5, 9, 13, 17, 21]
     prof = 2
-    if level in range(1, 21):
-        if level in (1, 2, 3, 4):
-            prof = 2
-        elif level in (5, 6, 7, 8):
-            prof = 3
-        elif level in (9, 10, 11, 12):
-            prof = 4
-        elif level in (13, 14, 15, 16):
-            prof = 5
-        elif level in (17, 18, 19, 20):
-            prof = 6
-    else:
-        sys.exit('Your level must be between 1 and 20!')
+    for tier in prof_tiers:
+        tier_level_range = range(tier, prof_tiers[prof_tiers.index(tier) + 1])
+        if level in tier_level_range:
+            prof = prof_tiers.index(tier) + 2
+            break
     print('Your proficiency bonus at level {} is {}.\n'.format(level, prof))
 
 
