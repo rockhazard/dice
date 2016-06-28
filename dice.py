@@ -258,8 +258,8 @@ def damage():
 
 def main(argv):
     # parse commandline arguments
-    parser = argparse.ArgumentParser(prog=sys.argv[0][2:],
-                                     formatter_class=argparse.RawDescriptionHelpFormatter,
+    parser = argparse.ArgumentParser(prog=sys.argv[0][2:], formatter_class=
+                                    argparse.RawDescriptionHelpFormatter,
                                      description=textwrap.dedent("""\
         %(prog)s is a dice roller customized for D&D 5th Edition. Execution
         without any options will roll a d20 and return a result with statistics.
@@ -267,29 +267,25 @@ def main(argv):
         %(prog)s was developed by rockhazard and licensed under GPL3.0.
         There are no warranties expressed or implied.
         """))
-    parser.add_argument('--version', help='print version info then exit',
-                        version='%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard',
-                        action='version')
+    parser.add_argument('--version', help='print version info then exit', 
+        version="""%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard""", 
+        action='version')
     parser.add_argument('-r', '--roll', help="""Roll a die or set of dice and
     retrieve a result.  Use normal dice notation, where X > 0, Y > 1, and Z is
     optional but can be any integer.""", metavar='XdY+/-Z')
     parser.add_argument('-s', '--stats', help="""Roll a die or set of dice and
     retrieve a result  with statistics. Use normal dice notation, where X > 0,
     Y > 1, and Z is optional but can be  any integer.""", metavar='XdY+/-Z')
-    parser.add_argument('-a', '--advantage',
-                        help='Roll advantage. This rolls 2d20 and removes the lowest die.',
-                        action='store_true')
-    parser.add_argument('-d', '--disadvantage',
-                        help='Roll disadvantage. This rolls 2d20 and removes the highest die.',
-                        action='store_true')
-    parser.add_argument('-p', '--proficiency',
-                        help='Display your proficiency bonus by entering your LEVEL from 1 to 20.',
-                        nargs=1, metavar=('LEVEL'))
-    parser.add_argument('--ability',
-                        help='Roll a set of ability scores with modifiers.',
-                        action='store_true')
-    parser.add_argument('--demo', help='Demonstrate program features.',
-                        action='store_true')
+    parser.add_argument('-a', '--advantage', help="""Roll advantage. This rolls 
+    2d20 and removes the lowest die.""", action='store_true')
+    parser.add_argument('-d', '--disadvantage', help="""Roll disadvantage. 
+    This rolls 2d20 and removes the highest die.""", action='store_true')
+    parser.add_argument('-p', '--proficiency', help="""Display your proficiency 
+    bonus by entering your LEVEL from 1 to 20.""", nargs=1, metavar=('LEVEL'))
+    parser.add_argument('--ability', help="""Roll a set of ability scores with 
+    modifiers.""", action='store_true')
+    parser.add_argument('--demo', help="""Demonstrate program features.""",
+        action='store_true')
     args = parser.parse_args()
 
     try:  # options that require user input.
