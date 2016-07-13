@@ -96,10 +96,8 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
 
     # roll
     rolls = []
-    count = dice
-    while count > 0:
+    for die in range(dice):
         rolls.append(random.randrange(1, sides + 1))
-        count -= 1
 
     # post-roll stats
     rsort = sorted(rolls)
@@ -116,9 +114,7 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
     if stat == 'all':
         return stats
     else:
-        for i in stats:
-            if stat == i:
-                return stats[i]
+        return stats[stat]
 
 
 def ability_score():
