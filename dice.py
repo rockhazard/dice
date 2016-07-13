@@ -214,7 +214,7 @@ def stats_roll(dice=1, sides=20, bonus=0):
         Dice: ....... {}
         Sides/Die: .. {}
         Half ........ {}
-        Double ...... {}        
+        Double ...... {}
         """.format(eg['roll'], eg['sorted'], eg['total'], eg['average'],
                    eg['min'], eg['max'], eg['dice'], eg['sides'], eg['half'],
                    eg['double'])))
@@ -263,8 +263,8 @@ def main(argv):
         %(prog)s was developed by rockhazard and licensed under GPL3.0.
         There are no warranties expressed or implied.
         """))
-    parser.add_argument('--version', help='print version info then exit', 
-        version="""%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard""", 
+    parser.add_argument('--version', help='print version info then exit',
+        version="""%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard""",
         action='version')
     parser.add_argument('-r', '--roll', help="""Roll a die or set of dice and
     retrieve a result.  Use normal dice notation, where X > 0, Y > 1, and Z is
@@ -272,13 +272,13 @@ def main(argv):
     parser.add_argument('-s', '--stats', help="""Roll a die or set of dice and
     retrieve a result  with statistics. Use normal dice notation, where X > 0,
     Y > 1, and Z is optional but can be  any integer.""", metavar='XdY+/-Z')
-    parser.add_argument('-a', '--advantage', help="""Roll advantage. This rolls 
+    parser.add_argument('-a', '--advantage', help="""Roll advantage. This rolls
     2d20 and removes the lowest die.""", action='store_true')
-    parser.add_argument('-d', '--disadvantage', help="""Roll disadvantage. 
+    parser.add_argument('-d', '--disadvantage', help="""Roll disadvantage.
     This rolls 2d20 and removes the highest die.""", action='store_true')
-    parser.add_argument('-p', '--proficiency', help="""Display your proficiency 
+    parser.add_argument('-p', '--proficiency', help="""Display your proficiency
     bonus by entering your LEVEL from 1 to 20.""", nargs=1, metavar=('LEVEL'))
-    parser.add_argument('--ability', help="""Roll a set of ability scores with 
+    parser.add_argument('--ability', help="""Roll a set of ability scores with
     modifiers.""", action='store_true')
     parser.add_argument('--demo', help="""Demonstrate program features.""",
         action='store_true')
@@ -288,21 +288,21 @@ def main(argv):
         if args.roll:
             ra = roll_args(args.roll)
             print(roll(int(ra[0]), int(ra[1]), int(ra[2])))
-        if args.stats:
+        elif args.stats:
             ra = roll_args(args.stats)
             stats_roll(int(ra[0]), int(ra[1]), int(ra[2]))
-        if args.proficiency:
+        elif args.proficiency:
             prof_bonus(int(args.proficiency[0]))
     except ValueError:
         sys.exit('USAGE ERROR: invalid input.')
 
     if args.advantage:
         advantage()
-    if args.disadvantage:
+    elif args.disadvantage:
         disadvantage()
-    if args.ability:
+    elif args.ability:
         ability()
-    if args.demo:
+    elif args.demo:
         ability()
         prof_bonus(5)
         advantage()
@@ -311,7 +311,7 @@ def main(argv):
         percentile()
         damage()
         stats_roll(20, 6)
-    if len(sys.argv) == 1:
+    elif len(sys.argv) == 1:
         # if no arguments, roll a d20 with stats_roll
         stats_roll()
 
