@@ -97,7 +97,7 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
     # roll
     rolls = []
     for die in range(dice):
-        rolls.append(random.randrange(1, sides + 1))
+        rolls.append(random.randint(1, sides))
 
     # post-roll stats
     rsort = sorted(rolls)
