@@ -14,13 +14,14 @@ import random
 import math
 import argparse
 import textwrap
+from pathlib import Path
 
 
 __author__ = 'rockhazard'
 
 
 def roll_args(arg):
-    # allow user to enter normal roll notation (e.g. 2d6+5)
+    """allow user to enter normal roll notation (e.g. 2d6+5)"""
     # returns a list of int-convertible strings for roll().
     roll_args_format_check(arg)
     init_args = arg.split('d')
@@ -69,11 +70,9 @@ def roll_args_int_check(roll_ints):
 
 def roll(dice=1, sides=20, bonus=0, stat='total'):
     """
-    dice roller
-    * default returns the resulting total of a 1d20 roll
-    * use stat='key' to return a specific statistic, such as 'average'
-    * example: roll(2, 6, stat='average') returns the average roll of 2d6
-    * use stat='all' to return a dictionary of all stats
+    stat can be used to return a dictionary of statistics with 'all', or one
+    at a time.  Possible values: 'all', 'total', 'roll', 'average', 'max',
+    'min', 'dice', 'sides', 'sorted', 'half', and 'double'
     """
 
     # pre-roll check
@@ -118,7 +117,7 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
 
 
 def ability_score():
-    # ability score: roll 4d6, subtract 1 die, then calculate score and modifier
+    """roll 4d6, subtract lowest die, then calculate score and modifier"""
     rolls = sorted([roll(1, 6) for i in range(0, 4)])
     del rolls[0]
     score = sum(rolls)
@@ -128,7 +127,7 @@ def ability_score():
 
 
 def attack(ver=True):
-    # attack roll
+    """d20 attack roll"""
     default_attack = roll()
     if ver:
         print('### ATTACK! ###')
@@ -138,7 +137,7 @@ def attack(ver=True):
 
 
 def advantage(verb=True):
-    # advantage: roll 2d20 then drop the lowest
+    """roll 2d20 then drop the lowest"""
     rolls = sorted([roll(), roll()])
     if verb:
         print('### Advantage ###')
@@ -151,7 +150,7 @@ def advantage(verb=True):
 
 
 def disadvantage(verb=True):
-    # disadvantage: roll 2d20 then drop the highest
+    """roll 2d20 then drop the highest"""
     rolls = sorted([roll(), roll()])
     if verb:
         print('### Disadvantage ###')
@@ -164,7 +163,7 @@ def disadvantage(verb=True):
 
 
 def prof_bonus(level=1):
-    # calculate proficiency bonus (prof) based on level tiers
+    """calculate proficiency bonus (prof) based on level tiers"""
     # proficiency equals tier's index in prof_tiers plus 2.
     if level > 20:
         sys.exit('USAGE ERROR: Level must be between 1 and 20.')
@@ -184,7 +183,7 @@ def percentile():
 
 
 def ability():
-    # create then print six ability scores and their modifiers
+    """create then print six ability scores and their modifiers"""
     score_1 = ability_score()
     score_2 = ability_score()
     score_3 = ability_score()
@@ -202,8 +201,8 @@ def ability():
 
 
 def stats_roll(dice=1, sides=20, bonus=0):
-    # A dice roll that prints a complete stat table.
-    eg = roll(dice, sides, bonus, stat='all')
+    """A dice roll that can print a complete dictionary of stats."""
+    example = roll(dice, sides, bonus, stat='all')
     print(textwrap.dedent("""\
         ### Roll Statistics For: {} ###
         Roll: ....... {}
@@ -215,20 +214,21 @@ def stats_roll(dice=1, sides=20, bonus=0):
         Sides/Die: .. {}
         Half ........ {}
         Double ...... {}
-        """.format(eg['roll'], eg['sorted'], eg['total'], eg['average'],
-                   eg['min'], eg['max'], eg['dice'], eg['sides'], eg['half'],
-                   eg['double'])))
+        """.format(example['roll'], example['sorted'], example['total'],
+                   example['average'], example['min'], example['max'],
+                   example['dice'], example['sides'], example['half'],
+                   example['double'])))
 
     # Message for a critical or an automatic failure.
     if dice == 1 and sides == 20:
-        if eg['sorted'][0] == 20:
+        if example['sorted'][0] == 20:
             print('Great success!\n')
-        elif eg['sorted'][0] == 1:
+        elif example['sorted'][0] == 1:
             print('Pathetic!\n')
 
 
 def damage():
-    # print out sample damage dice and their averages
+    """damage dice and their averages"""
     damage1 = roll(1, 4, stat='all')
     damage2 = roll(1, 6, stat='all')
     damage3 = roll(2, 6, stat='all')
@@ -254,8 +254,9 @@ def damage():
 
 def main(argv):
     # parse commandline arguments
-    parser = argparse.ArgumentParser(prog=sys.argv[0][2:], formatter_class=
-                                    argparse.RawDescriptionHelpFormatter,
+    parser = argparse.ArgumentParser(prog=str(Path(sys.argv[0]).name),
+                                     formatter_class=
+                                     argparse.RawDescriptionHelpFormatter,
                                      description=textwrap.dedent("""\
         %(prog)s is a dice roller customized for D&D 5th Edition. Execution
         without any options will roll a d20 and return a result with statistics.
