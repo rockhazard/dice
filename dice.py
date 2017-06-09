@@ -22,8 +22,7 @@ __author__ = 'rockhazard'
 
 
 def roll_args(arg):
-    """allow user to enter normal roll notation (e.g. 2d6+5)"""
-    # returns a list of numbers for roll().
+    """Splits standard roll notation into a list of integers for roll()"""
     dice_pattern = re.compile(
     r'^(?P<num>\d+)d(?P<sides>\d+)(?P<mod>[\+|\-]\d*)*$', re.I)
     if dice_pattern.match(arg):
