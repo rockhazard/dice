@@ -14,6 +14,7 @@ import random
 import math
 import argparse
 import textwrap
+import re
 from pathlib import Path
 
 
@@ -22,51 +23,17 @@ __author__ = 'rockhazard'
 
 def roll_args(arg):
     """allow user to enter normal roll notation (e.g. 2d6+5)"""
-    # returns a list of int-convertible strings for roll().
-    roll_args_format_check(arg)
-    init_args = arg.split('d')
-    # if init_args has a negative mod, create index for it
-    if len(init_args[1].split('-')) == 2:
-        neg_mod = init_args[1].split('-')
-        neg_mod[1] = '-' + neg_mod[1]
-        neg_mod.insert(0, init_args[0])
-        if len(neg_mod) < 3:
-            neg_mod.insert(2, 0)
-        roll_args_int_check(neg_mod)
-        return neg_mod
-    # if init_args has a positive mod, create index for it
-    elif len(init_args[1].split('+')) == 2:
-        pos_mod = init_args[1].split('+')
-        pos_mod.insert(0, init_args[0])
-        if len(pos_mod) < 3:
-            pos_mod.insert(2, 0)
-        roll_args_int_check(pos_mod)
-        return pos_mod
-    else:  # zero mod roll
-        if len(init_args) == 2:
-            init_args.append(0)
-            roll_args_int_check(init_args)
-            return init_args
-        else:
-            sys.exit('USAGE ERROR: At least one die required.')
-
-
-def roll_args_format_check(arg):
-    if 'd' not in arg:
-        sys.exit('USAGE ERROR: Roll notation must include "d", as in "1d20".')
+    # returns a list of numbers for roll().
+    dice_pattern = re.compile(
+    r'^(?P<num>\d+)d(?P<sides>\d+)(?P<mod>[\+|\-]\d*)*$', re.I)
+    if dice_pattern.match(arg):
+        hand = list(dice_pattern.match(arg).groups())
+        if not hand[2]:
+            hand[2] = 0
+        intHand = [int(num) for num in hand]
+        return intHand
     else:
-        return True
-
-
-def roll_args_int_check(roll_ints):
-    for die in roll_ints:
-        try:
-            int(die)
-        except ValueError:
-            sys.exit('USAGE ERROR: between two and three integers required.')
-    else:
-        return True
-
+        sys.exit('Error: entry must be in standard roll notation, e.g. 1d6+1')
 
 def roll(dice=1, sides=20, bonus=0, stat='total'):
     """
@@ -288,10 +255,10 @@ def main(argv):
     try:  # options that require user input.
         if args.roll:
             ra = roll_args(args.roll)
-            print(roll(int(ra[0]), int(ra[1]), int(ra[2])))
+            print(roll(ra[0], ra[1], ra[2]))
         elif args.stats:
             ra = roll_args(args.stats)
-            stats_roll(int(ra[0]), int(ra[1]), int(ra[2]))
+            stats_roll(ra[0], ra[1], ra[2])
         elif args.proficiency:
             prof_bonus(int(args.proficiency[0]))
     except ValueError:
