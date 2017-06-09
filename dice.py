@@ -22,11 +22,13 @@ __author__ = 'rockhazard'
 
 
 def roll_args(arg):
-    """Splits standard roll notation into a list of integers for roll()"""
+    """Splits standard dice notation input into a list of integers for roll()"""
     dice_pattern = re.compile(
-    r'^(?P<num>\d+)d(?P<sides>\d+)(?P<mod>[\+|\-]\d*)*$', re.I)
+    r'^(?P<num>\d*)[d|D](?P<sides>\d+)(?P<mod>[\+|\-]\d*)*$', re.I)
     if dice_pattern.match(arg):
         hand = list(dice_pattern.match(arg).groups())
+        if not hand[0]:
+            hand[0] = 1
         if not hand[2]:
             hand[2] = 0
         intHand = [int(num) for num in hand]
@@ -131,6 +133,7 @@ def disadvantage(verb=True):
 def prof_bonus(level=1):
     """calculate proficiency bonus (prof) based on level tiers"""
     # proficiency equals tier's index in prof_tiers plus 2.
+    level = int(level)
     if level > 20:
         sys.exit('USAGE ERROR: Level must be between 1 and 20.')
     prof_tiers = [1, 5, 9, 13, 17, 21]
@@ -247,6 +250,8 @@ def main(argv):
     bonus by entering your LEVEL from 1 to 20.""", nargs=1, metavar=('LEVEL'))
     parser.add_argument('--ability', help="""Roll a set of ability scores with
     modifiers.""", action='store_true')
+    parser.add_argument('-%', '--percentile', help="""Roll percentile.""",
+        action='store_true')
     parser.add_argument('--demo', help="""Demonstrate program features.""",
         action='store_true')
     args = parser.parse_args()
@@ -259,7 +264,7 @@ def main(argv):
             ra = roll_args(args.stats)
             stats_roll(ra[0], ra[1], ra[2])
         elif args.proficiency:
-            prof_bonus(int(args.proficiency[0]))
+            prof_bonus(args.proficiency[0])
     except ValueError:
         sys.exit('USAGE ERROR: invalid input.')
 
@@ -267,6 +272,8 @@ def main(argv):
         advantage()
     elif args.disadvantage:
         disadvantage()
+    elif args.percentile:
+        percentile()
     elif args.ability:
         ability()
     elif args.demo:

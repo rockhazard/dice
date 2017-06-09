@@ -46,19 +46,19 @@ class Test(unittest.TestCase):
 
     # roll_args tests
     def test_roll_args_neg(self):
-        self.assertEqual(self.roll_args_neg, ['10', '100', '-50'],
+        self.assertEqual(self.roll_args_neg, [10, 100, -50],
                          'Parse failure.')
 
     def test_roll_args_pos(self):
-        self.assertEqual(self.roll_args_pos, ['10', '100', '50'],
+        self.assertEqual(self.roll_args_pos, [10, 100, 50],
                          'Parse failure.')
 
     def test_roll_args_2dice(self):
-        self.assertEqual(self.roll_args_2dice, ['2', '4', 0],
+        self.assertEqual(self.roll_args_2dice, [2, 4, 0],
                          'Parse failure.')
 
     def test_roll_args_2dice_bonus(self):
-        self.assertEqual(self.roll_args_2dice_bonus, ['2', '4', '5'],
+        self.assertEqual(self.roll_args_2dice_bonus, [2, 4, 5],
                          'Parse failure.')
 
 
