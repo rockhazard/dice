@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
 """
-* dice roller with full statistics output
-* ability score roller with modifier calculator for D&D
-* proficiency bonus calculator for D&D
-* advantage/disadvantage roller for D&D
-* averages are rounded up to the nearest whole number, reflecting hp rules
+dice.py is a dice roller with optional statistical output (averages rounded up).
+The program accepts standard dice notation (such as 2d6+4 or d20).
 """
 
 
@@ -83,7 +80,7 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
 
 
 def stats_roll(dice=1, sides=20, bonus=0):
-    """A dice roll that can print a complete dictionary of stats."""
+    """A dice roll that prints stats."""
     example = roll(dice, sides, bonus, stat='all')
     print(dedent("""\
         ### Roll Statistics For: {} ###
@@ -114,7 +111,7 @@ def main(argv):
     parser = argparse.ArgumentParser(prog='dice.py',
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=dedent("""\
-        %(prog)s is a dice roller customized for D&D 5th Edition. Execution
+        %(prog)s is a dice roller customized for role playin ggames. Execution
         without any options will roll a d20 and return a result with statistics.
         """), epilog=dedent("""\
         %(prog)s was developed by rockhazard and licensed under GPL3.0.
