@@ -10,10 +10,11 @@
 
 
 import sys
-import random
-import math
-import argparse
 import re
+import argparse
+from random import randint
+from math import floor
+from math import ceil
 from textwrap import dedent
 
 __author__ = 'rockhazard'
@@ -43,8 +44,8 @@ def roll_args(arg):
 def roll(dice=1, sides=20, bonus=0, stat='total'):
     """
     stat can be used to return a dictionary of statistics with 'all', or one
-    at a time.  Possible values: 'all', 'total', 'roll', 'average', 'max',
-    'min', 'dice', 'sides', 'sorted', 'half', and 'double'
+    of these values: 'all', 'total', 'roll', 'average', 'max', 'min', 'dice', 
+    'sides', 'sorted', 'half', and 'double'
     """
 
     # bonus formatting
@@ -54,19 +55,19 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
         throw = '{}d{}'.format(dice, sides)
 
     # pre-roll stats
-    average = math.ceil((sides / 2 + 0.5) * dice) + bonus
+    average = ceil((sides / 2 + 0.5) * dice) + bonus
     minimum = dice * 1 + bonus
     maximum = dice * sides + bonus
 
     # roll
     rolls = []
     for die in range(dice):
-        rolls.append(random.randint(1, sides))
+        rolls.append(randint(1, sides))
 
     # post-roll stats
     rsort = sorted(rolls)
     total = sum(rolls) + bonus
-    half = math.floor(total / 2)
+    half = floor(total / 2)
     double = total * 2
 
     # stats dictionary
@@ -140,7 +141,7 @@ def main(argv):
             stats_roll(ra[0], ra[1], ra[2])
     except ValueError:
         sys.exit('ERROR: invalid input.')
-    elif len(sys.argv) == 1:
+    if len(sys.argv) == 1:
         # if no arguments, roll a d20 with stats_roll
         stats_roll()
 
