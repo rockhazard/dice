@@ -13,8 +13,8 @@ import sys
 import random
 import math
 import argparse
-import textwrap
 import re
+from textwrap import dedent
 from pathlib import Path
 
 
@@ -24,17 +24,23 @@ __author__ = 'rockhazard'
 def roll_args(arg):
     """Splits standard dice notation input into a list of integers for roll()"""
     dice_pattern = re.compile(
-    r'^(?P<num>\d*)[d|D](?P<sides>\d+)(?P<mod>[\+|\-]\d*)*$', re.I)
+        r'^(?P<num>\d*)[d|D](?P<sides>\d+)(?P<mod>[\+|\-]\d*)*$', re.I)
     if dice_pattern.match(arg):
-        hand = list(dice_pattern.match(arg).groups())
-        if not hand[0]:
-            hand[0] = 1
-        if not hand[2]:
-            hand[2] = 0
-        intHand = [int(num) for num in hand]
+        strHand = list(dice_pattern.match(arg).groups())
+        # handle single die notation and no mod
+        if not strHand[0]:
+            strHand[0] = 1
+        if int(strHand[1]) < 2:
+            strHand[1] = 2
+            print('Error: input fewer than 2 sides; converting to minimum.')
+        if not strHand[2]:
+            strHand[2] = 0
+        # convert input to integers
+        intHand = [int(num) for num in strHand]
         return intHand
     else:
-        sys.exit('Error: entry must be in standard roll notation, e.g. 1d6+1')
+        sys.exit('Error: entry must be in standard dice notation, e.g. 1d6+1')
+
 
 def roll(dice=1, sides=20, bonus=0, stat='total'):
     """
@@ -43,13 +49,6 @@ def roll(dice=1, sides=20, bonus=0, stat='total'):
     'min', 'dice', 'sides', 'sorted', 'half', and 'double'
     """
 
-    # pre-roll check
-    if dice < 1:
-        dice = 1
-        print('Number of dice must be greater than 0: setting dice to 1!')
-    if sides < 2:
-        sides = 2
-        print('Number of sides must be greater than 1: setting sides to 2!')
     # bonus formatting
     if bonus != 0:
         throw = '{}d{} + ({})'.format(dice, sides, bonus)
@@ -94,10 +93,10 @@ def ability_score():
     return result
 
 
-def attack(ver=True):
+def attack(verb=True):
     """d20 attack roll"""
     default_attack = roll()
-    if ver:
+    if verb:
         print('### ATTACK! ###')
         print(default_attack, '\n')
     else:
@@ -172,7 +171,7 @@ def ability():
 def stats_roll(dice=1, sides=20, bonus=0):
     """A dice roll that can print a complete dictionary of stats."""
     example = roll(dice, sides, bonus, stat='all')
-    print(textwrap.dedent("""\
+    print(dedent("""\
         ### Roll Statistics For: {} ###
         Roll: ....... {}
         Total: ...... {}
@@ -224,18 +223,17 @@ def damage():
 def main(argv):
     # parse commandline arguments
     parser = argparse.ArgumentParser(prog=str(Path(sys.argv[0]).name),
-                                     formatter_class=
-                                     argparse.RawDescriptionHelpFormatter,
-                                     description=textwrap.dedent("""\
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
+                                     description=dedent("""\
         %(prog)s is a dice roller customized for D&D 5th Edition. Execution
         without any options will roll a d20 and return a result with statistics.
-        """), epilog=textwrap.dedent("""\
+        """), epilog=dedent("""\
         %(prog)s was developed by rockhazard and licensed under GPL3.0.
         There are no warranties expressed or implied.
         """))
     parser.add_argument('--version', help='print version info then exit',
-        version="""%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard""",
-        action='version')
+                        version="""%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard""",
+                        action='version')
     parser.add_argument('-r', '--roll', help="""Roll a die or set of dice and
     retrieve a result.  Use normal dice notation, where X > 0, Y > 1, and Z is
     optional but can be any integer.""", metavar='XdY+/-Z')
@@ -251,9 +249,9 @@ def main(argv):
     parser.add_argument('--ability', help="""Roll a set of ability scores with
     modifiers.""", action='store_true')
     parser.add_argument('-%', '--percentile', help="""Roll percentile.""",
-        action='store_true')
+                        action='store_true')
     parser.add_argument('--demo', help="""Demonstrate program features.""",
-        action='store_true')
+                        action='store_true')
     args = parser.parse_args()
 
     try:  # options that require user input.
