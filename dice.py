@@ -111,7 +111,7 @@ def main(argv):
     parser = argparse.ArgumentParser(prog='dice',
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=dedent("""\
-        %(prog)s is a dice roller customized for role playin ggames. Execution
+        %(prog)s is a dice roller customized for role playing games. Execution
         without any options will roll a d20 and return a result with statistics.
         """), epilog=dedent("""\
         %(prog)s was developed by rockhazard and licensed under GPL3.0.
