@@ -23,19 +23,19 @@ def roll_args(arg):
         r'^(?P<num>\d*)[d|D](?P<sides>\d+)(?P<mod>[\+|\-]\d*)*$', re.I)
     if dice_pattern.match(arg):
         strHand = list(dice_pattern.match(arg).groups())
-        # handle single die notation and no mod
+        # handle single die notation, minimum sides, and no mod
         if not strHand[0]:
             strHand[0] = 1
         if int(strHand[1]) < 2:
             strHand[1] = 2
-            print('Error: input fewer than 2 sides; converting to minimum.')
+            print('ERROR: input fewer than 2 sides; converting to minimum.')
         if not strHand[2]:
             strHand[2] = 0
         # convert input to integers
         intHand = [int(num) for num in strHand]
         return intHand
     else:
-        sys.exit('Error: entry must be in standard dice notation, e.g. 1d6+1')
+        sys.exit('ERROR: entry must be in standard dice notation, e.g. 1d6+1')
 
 
 def roll(dice=1, sides=20, bonus=0, stat='total'):
