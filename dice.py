@@ -108,7 +108,7 @@ def stats_roll(dice=1, sides=20, bonus=0):
 
 def main(argv):
     # parse commandline arguments
-    parser = argparse.ArgumentParser(prog='dice.py',
+    parser = argparse.ArgumentParser(prog='dice',
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=dedent("""\
         %(prog)s is a dice roller customized for role playin ggames. Execution
