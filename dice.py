@@ -100,13 +100,6 @@ def stats_roll(dice=1, sides=20, bonus=0):
                    example['dice'], example['sides'], example['half'],
                    example['double'])))
 
-    # Message for a critical or an automatic failure.
-    if dice == 1 and sides == 20:
-        if example['sorted'][0] == 20:
-            print('Great success!\n')
-        elif example['sorted'][0] == 1:
-            print('Pathetic!\n')
-
 
 def main(argv):
     # parse commandline arguments
