@@ -30,6 +30,8 @@ def roll_args(arg):
         # handle single die notation and no mod
         if not strHand[0]:
             strHand[0] = 1
+        elif int(strHand[0]) < 1:
+            strHand[0] = 1
         if int(strHand[1]) < 2:
             strHand[1] = 2
             print('Error: input fewer than 2 sides; converting to minimum.')
@@ -264,7 +266,7 @@ def main(argv):
         elif args.proficiency:
             prof_bonus(args.proficiency[0])
     except ValueError:
-        sys.exit('USAGE ERROR: invalid input.')
+        sys.exit('Error: invalid input.')
 
     if args.advantage:
         advantage()
