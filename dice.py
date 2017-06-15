@@ -20,7 +20,7 @@ __author__ = 'rockhazard'
 def roll_args(arg):
     """Splits standard dice notation input into a list of integers for roll()"""
     dice_pattern = re.compile(
-        r'^(?P<num>\d*)[d|D](?P<sides>\d+)(?P<mod>[\+|\-]\d*)*$', re.I)
+        r'^(?P<num>\d*)[d|D](?P<sides>[2-9]|\d{2,})(?P<mod>[\+|\-]\d*)*$', re.I)
     if dice_pattern.match(arg):
         strHand = list(dice_pattern.match(arg).groups())
         # handle single die notation and no mod
@@ -28,9 +28,6 @@ def roll_args(arg):
             strHand[0] = 1
         elif int(strHand[0]) < 1:
             strHand[0] = 1
-        if int(strHand[1]) < 2:
-            strHand[1] = 2
-            print('Error: input fewer than 2 sides; converting to minimum.')
         if not strHand[2]:
             strHand[2] = 0
         # convert input to integers
