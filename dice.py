@@ -252,11 +252,52 @@ def damage():
     print()
 
 
+def fate(rating=0):
+    """roll Fate Core System -/0/+ dice"""
+    rating = rating.lower()
+    adjectives = dict(
+        legendary=8,
+        epic=7,
+        fantastic=6,
+        superb=5,
+        great=4,
+        good=3,
+        fair=2,
+        average=1,
+        mediocre=0,
+        poor=-1,
+        terrible=-2,
+        catastrophic=-3,
+        horrifying=-4
+    )
+
+    try:
+        if rating in adjectives:
+            rating = adjectives[rating]
+        else:
+            rating = int(rating)
+    except ValueError:
+        sys.exit('fate rolls only accept integers or valid rating adjectives.')
+
+    fate_roll = roll(dice=4, sides=3, stat='sorted')
+    fate_results = []
+
+    for die in fate_roll:
+        if die == 1:
+            fate_results.append(-1)
+        elif die == 2:
+            fate_results.append(0)
+        elif die == 3:
+            fate_results.append(1)
+    result = sum(fate_results) + rating
+    print(f'{fate_results} + {rating} = {result}')
+    return result
+
+
 def main(argv):
     # parse commandline arguments
     parser = argparse.ArgumentParser(prog=str(Path(sys.argv[0]).name),
-                                     formatter_class=
-                                     argparse.RawDescriptionHelpFormatter,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter,
                                      description=textwrap.dedent("""\
         %(prog)s is a dice roller customized for D&D 5th Edition. Execution
         without any options will roll a d20 and return a result with statistics.
@@ -265,8 +306,8 @@ def main(argv):
         There are no warranties expressed or implied.
         """))
     parser.add_argument('--version', help='print version info then exit',
-        version="""%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard""",
-        action='version')
+                        version="""%(prog)s 1.0a "Mystra", GPL3.0 (c) 2016, by rockhazard""",
+                        action='version')
     parser.add_argument('-r', '--roll', help="""Roll a die or set of dice and
     retrieve a result.  Use normal dice notation, where X > 0, Y > 1, and Z is
     optional but can be any integer.""", metavar='XdY+/-Z')
@@ -282,7 +323,9 @@ def main(argv):
     parser.add_argument('--ability', help="""Roll a set of ability scores with
     modifiers.""", action='store_true')
     parser.add_argument('--demo', help="""Demonstrate program features.""",
-        action='store_true')
+                        action='store_true')
+    parser.add_argument('-f', '--fate', help="""Roll fate.""", nargs='?',
+                        const='0')
     args = parser.parse_args()
 
     try:  # options that require user input.
@@ -303,6 +346,10 @@ def main(argv):
         disadvantage()
     elif args.ability:
         ability()
+    elif args.fate:
+        # bonus = int(args.fate)
+        fate(args.fate)
+        # print('fate arg value: ', bonus)
     elif args.demo:
         ability()
         prof_bonus(5)
